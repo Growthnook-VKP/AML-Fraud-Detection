@@ -59,22 +59,13 @@ AML-Fraud-Detection/
 ├── predict.py                     # Standalone prediction script
 ├── requirements.txt               # Project dependencies
 ├── README.md
-├── LICENSE
-├── .gitignore
 │
 ├── templates/
 │   └── index.html
 │
 ├── static/
-│   ├── css/
-│   ├── js/
 │   └── images/
-│
-└── screenshots/
-    ├── home.png
-    ├── prediction.png
-    ├── fraud_result.png
-    └── legitimate_result.png
+
 ```
 
 ---
@@ -345,8 +336,8 @@ This project is licensed under the **MIT License**.
 
 **Vishal Kumar Prasad**
 
-* GitHub: https://github.com/YOUR_USERNAME
-* LinkedIn: https://linkedin.com/in/YOUR_LINKEDIN_USERNAME
+* GitHub: https://github.com/Growthnook-VKP
+* LinkedIn: www.linkedin.com/in/vishal-kumar-prasad-a1b25b26b
 
 ---
 
