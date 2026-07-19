@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AML Fraud Detection Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: url('/static/background.jpg');
+            min-height: 100vh;
+            background-size: cover;
+            color: #fff;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            opacity: 0.5;
+            z-index: -1;
+        }
+        .card {
+            border-radius: 15px;
+        }
+        .badge-fraud {
+            background: #dc3545;
+        }
+        .badge-legit {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+<div class="container py-5">
+    <h1 class="text-center mb-4">
+        AML Fraud Detection System
+    </h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-body text-dark">
+            <h4 class="mb-3">Transaction Details</h4>
+
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <input name="Sender_account" class="form-control" placeholder="Sender Account" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input name="Receiver_account" class="form-control" placeholder="Receiver Account" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select name="Payment_currency" class="form-select" required>
+                            <option value="" disabled selected>Select Payment Currency</option>
+                            {% for val in payment_currency_options %}
+                                <option value="{{ val }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select name="Received_currency" class="form-select" required>
+                            <option value="" disabled selected>Select Received Currency</option>
+                            {% for val in received_currency_options %}
+                                <option value="{{ val }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select name="Sender_bank_location" class="form-select" required>
+                            <option value="" disabled selected>Select Sender Bank Location</option>
+                            {% for val in sender_bank_location_options %}
+                                <option value="{{ val }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select name="Receiver_bank_location" class="form-select" required>
+                            <option value="" disabled selected>Select Receiver Bank Location</option>
+                            {% for val in receiver_bank_location_options %}
+                                <option value="{{ val }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select name="Payment_type" class="form-select" required>
+                            <option value="" disabled selected>Select Payment Type</option>
+                            {% for val in payment_type_options %}
+                                <option value="{{ val }}">{{ val }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input name="Amount" type="number" step="0.01" class="form-control" placeholder="Amount" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input name="Date" class="form-control" placeholder="Date (DD/MM/YYYY)" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input name="Time" class="form-control" placeholder="Time (HH:MM:SS)" required>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100 mt-4">
+                    Predict Fraud
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if result %}
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-center text-dark">
+                    <h4>Prediction Result</h4>
+
+                    <span class="badge {{ 'badge-fraud' if result.prediction == 'FRAUD' else 'badge-legit' }} fs-5 p-3">
+                        {{ result.prediction }}
+                    </span>
+
+                    <p class="mt-3">
+                        <strong>Fraud Probability:</strong> {{ result.probability }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body text-dark">
+                    <h4 class="text-center">Risk Score</h4>
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mt-4">
+        <div class="card-body text-dark">
+            <h4>Transaction Summary</h4>
+            <table class="table table-striped">
+                <tr><th>Fraud Probability</th><td>{{ result.probability }}</td></tr>
+                <tr><th>Decision</th><td>{{ result.prediction }}</td></tr>
+                <tr><th>Threshold</th><td>0.20</td></tr>
+                <tr><th>Model</th><td>CatBoost AML Classifier</td></tr>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if result %}
+<script>
+const fraudProb = {{ result.probability }};
+const legitProb = 1 - fraudProb;
+
+new Chart(document.getElementById("riskChart"), {
+    type: "doughnut",
+    data: {
+        labels: ["Fraud Risk", "Legitimate"],
+        datasets: [{
+            data: [fraudProb, legitProb],
+            backgroundColor: ["#dc3545", "#28a745"]
+        }]
+    },
+    options: {
+        cutout: "70%",
+        plugins: {
+            legend: { position: "bottom" }
+        }
+    }
+});
+</script>
+{% endif %}
+
+</body>
+</html>
