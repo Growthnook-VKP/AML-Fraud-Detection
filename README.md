@@ -132,7 +132,7 @@ The model uses transaction information including:
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/AML-Fraud-Detection.git
+git clone https:/Growthnook-VKP/github.com//AML-Fraud-Detection.git
 
 cd AML-Fraud-Detection
 ```
